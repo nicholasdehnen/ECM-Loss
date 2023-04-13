@@ -55,6 +55,18 @@ lr_config = dict(
     step=[8, 11])
 runner = dict(type='EpochBasedRunner', max_epochs=12)
 
+# wandb log config
+log_config = dict(
+    hooks = [
+    dict(type='TextLoggerHook'),
+    dict(type='MMDetWandbHook',
+         init_kwargs={'project': 'ecm-loss'},
+         interval=10,
+         log_checkpoint=True,
+         log_checkpoint_metadata=True,
+         num_eval_images=100)]
+
+)
 
 data = dict(train=dict(dataset=dict(pipeline=train_pipeline)))
 evaluation = dict(interval=12, metric=['bbox', 'segm'])
