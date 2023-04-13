@@ -57,7 +57,7 @@ runner = dict(type='EpochBasedRunner', max_epochs=12)
 
 # wandb log config
 log_config = dict(
-    interval=10,
+    interval = 50,
     hooks = [
     dict(type='MMDetWandbHook',
         init_kwargs={'project': 'ecm-loss'},
@@ -70,7 +70,7 @@ log_config = dict(
 )
 
 data = dict(
-    samples_per_gpu=4,
+    samples_per_gpu=3,
     train=dict(
         dataset=dict(
             pipeline=train_pipeline
