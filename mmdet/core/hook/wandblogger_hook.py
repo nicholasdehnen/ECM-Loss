@@ -235,7 +235,8 @@ class MMDetWandbHook(WandbLoggerHook):
             # Log the table
             self._log_eval_table(runner.epoch + 1)
 
-    @master_only
+    # for the reason of this double-layered structure, refer to
+    # https://github.com/open-mmlab/mmdetection/issues/8145#issuecomment-1345343076
     def after_train_iter(self, runner):
         if self.get_mode(runner) == 'train':
             # An ugly patch. The iter-based eval hook will call the
@@ -245,10 +246,13 @@ class MMDetWandbHook(WandbLoggerHook):
             return super(MMDetWandbHook, self).after_train_iter(runner)
         else:
             super(MMDetWandbHook, self).after_train_iter(runner)
+        self._after_train_iter(runner)
 
+    @master_only
+    def _after_train_iter(self, runner):
         if self.by_epoch:
             return
-
+        
         # Save checkpoint and metadata
         if (self.log_checkpoint
                 and self.every_n_iters(runner, self.ckpt_interval)
