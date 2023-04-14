@@ -11,7 +11,10 @@ model = dict(
             cls_predictor_cfg=dict(type='NormedLinear', tempearture=20),
             loss_cls=dict(
                 type='EffectiveClassMarginLossNick',
-                stats_file='lvis_v1_class_dist.txt' # needs to be adjusted based on dataset
+                stats_file='lvis_v1_class_dist.txt', # needs to be adjusted based on dataset
+                use_sigmoid=True,
+                num_classes=1203,
+                loss_weight=1.0, 
                 )),
         mask_head=dict(num_classes=1203, # needs to be adjusted based on dataset
                        predictor_cfg=dict(type='NormedConv2d', tempearture=20))),
@@ -57,11 +60,11 @@ runner = dict(type='EpochBasedRunner', max_epochs=12)
 log_config = dict(
     interval = 50,
     hooks = [
-    #dict(type='MMDetWandbHook',
-    #    init_kwargs={'project': 'ecm-loss'},
-    #    log_checkpoint=False,
-    #    log_checkpoint_metadata=False,
-    #    num_eval_images=100),
+    dict(type='MMDetWandbHook',
+        init_kwargs={'project': 'ecm-loss'},
+        log_checkpoint=False,
+        log_checkpoint_metadata=False,
+        num_eval_images=100),
     dict(type='TextLoggerHook'),
     ]
 
