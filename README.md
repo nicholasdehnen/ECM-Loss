@@ -2,34 +2,32 @@
 
 ## Introduction 
 
-This is an official implementation of [**Long-tail Detection with Effective Class-Margins**](https://www.ecva.net/papers/eccv_2022/papers_ECCV/papers/136680684.pdf). 
+This is an re-implementation of [**Long-tail Detection with Effective Class-Margins**](https://www.ecva.net/papers/eccv_2022/papers_ECCV/papers/136680684.pdf), done as part of the EECS6322 course at York University. 
 
+Find the original paper and its authors here:
 > [**Long-tail Detection with Effective Class-Margins**](https://www.ecva.net/papers/eccv_2022/papers_ECCV/papers/136680684.pdf)             
-> [Jang Hyun Cho](https://janghyuncho.github.io/) and [Philipp Kr&auml;henb&uuml;hl](https://www.philkr.net/)                 
-> *[ECCV 2022](https://eccv2022.ecva.net/) (oral)*      
+> [Jang Hyun Cho](https://janghyuncho.github.io/) and [Philipp Kr&auml;henb&uuml;hl](https://www.philkr.net/)
 
-
-Contact: janghyuncho7 [at] utexas.edu.
-
-
+Find the original implementation here:
+> https://github.com/janghyuncho/ECM-Loss
 
 
 ## Installation
 ### Requirements 
-- Python 3.6+
-- PyTorch 1.8+
-- torchvision 0.9+
-- mmdet 2.14+
-- mmcv 1.3+
+The code in this repository was found to be working with the following libraries and corresponding versions:
 
-We tested our codebase on mmdet 2.24.1, mmcv 1.5.1, PyTorch 1.11.0, torchvision 0.12.0, and python 3.9. 
+- Python 3.8+ (probably, only 3.8 was tested)
+- PyTorch 0.13.1
+- torchvision 0.14.1
+- mmdet 2.25.2
+- mmcv 1.7.0
 
 ### Setup
 To setup the code, please follow the commands below:
 
 ~~~
 # Clone the repo.
-git clone git@github.com:janghyuncho/ECM-Loss.git
+git clone https://github.com/nicholasdehnen/ECM-Loss.git
 cd ECM-Loss 
 
 # Create conda env.
@@ -37,20 +35,21 @@ conda create --name ecm_loss python=3.8 -y
 conda activate ecm_loss
 
 # Install PyTorch.
-conda install pytorch torchvision torchaudio cudatoolkit=10.2 -c pytorch
+conda install pytorch==1.13.1 torchvision==0.14.1 torchaudio==0.13.1 pytorch-cuda=11.7 cudatoolkit==11.7 -c pytorch -c nvidia
 
 # Install mmcv.
 pip install -U openmim
-mim install mmcv-full
+mim install mmcv-full==1.7.0
 
-# And mmdetection. 
-pip install mmdet 
-
-# Install mmdet dependencies.
+# Install mmdet and dependencies.
 pip install -e .
+pip install mmdet==2.25.2 
 
-# Additionally, install lvis-api. 
+# Install lvis-api. 
 pip install lvis
+
+# Downgrade numpy to <1.24.0 due to incompatibility
+pip install numpy==1.23.1
 ~~~
 
 ### Dataset 
@@ -70,26 +69,33 @@ data
 ~~~
 
 ## Training with ECM-Loss 
-All training commands for our models can be found [here](https://github.com/janghyuncho/ECM-Loss/tree/main/sh_files/ecm_loss). For example, you can train *mask-rcnn* with *resnet-50* backbone for 12 epochs with the following command:
+The authors original training scripts, as well as the ones added as part of this course project can be found [here](https://github.com/janghyuncho/ECM-Loss/tree/main/sh_files/ecm_loss). 
+
+To train using the author's implementation of the ECM-Loss and a *mask-rcnn* framework with *resnet-50* backbone for 12 epochs, use the following command:
 ~~~
 ./sh_files/ecm_loss/r50_1x.sh 
 ~~~
 
-ECM Loss is implemented [here](https://github.com/janghyuncho/ECM-Loss/blob/main/mmdet/models/losses/effective_class_margin_loss.py).
+Alternatively, to train using the re-implementation of the ECM-Loss, use one of the following commands:
+~~~
+./sh_files/ecm_loss/r50_1x_nick.sh
+# or
+./sh_files/ecm_loss/r50_1x_nick_author_bg_handling.sh
+~~~
 
-## Pretrained Models on LVIS v1
+Note that both Cho's scripts, as well as the ones added here assume a setup with 8 GPUs available. Furthermore, the \*_nick\*.sh scripts assume that the GPUs available have atleast 12GB of VRAM.
 
-The Google Drive links to pretrained weights and their config files. 
+## ECM-Loss implementation
 
-| Framework | Backbone | Schedule | Box AP | Mask AP | Weight | Config |
-|:--:|:--:|:--:|:--:|:--:|:--:|:--:|
-|Mask R-CNN |R50    | 1x  |26.9 | 26.4|[weight](https://drive.google.com/file/d/1Jcbbgq0RzZAza90EtsJtQ7w-dfSt5T0m/view?usp=sharing)|[config](https://github.com/janghyuncho/ECM-Loss/blob/main/configs/effective_class_margin_loss/r50_ecm_1x.py)  |
-|Mask R-CNN |R50    | 2x  |27.9 | 27.5|[weight](https://drive.google.com/file/d/1unA2YYjpC2YI5h7PZsojopKBSgJfnYoi/view?usp=sharing)|[config](https://github.com/janghyuncho/ECM-Loss/blob/main/configs/effective_class_margin_loss/r50_ecm_2x.py)  |
-|Mask R-CNN |R101   | 2x  |29.4 | 28.7|[weight](https://drive.google.com/file/d/1alF-CIZmtZos7mEUEd35sBCZxY03Otxu/view?usp=sharing)|[config](https://github.com/janghyuncho/ECM-Loss/blob/main/configs/effective_class_margin_loss/r101_ecm_2x.py)  |
-|Cascade Mask R-CNN |R101 | 2x | 33.4 | 30.6 |[weight](https://drive.google.com/file/d/1q1ensyvCu85bYncNBCF0xOeWRyUEWjrX/view?usp=sharing)|[config](https://github.com/janghyuncho/ECM-Loss/blob/main/configs/effective_class_margin_loss/c101_ecm_2x.py)  |
+* Cho's version of the ECM-Loss: [effective_class_margin_loss.py](https://github.com/nicholasdehnen/ECM-Loss/blob/0af6ce2ccf54b2feb8f4d430335b754699843cae/mmdet/models/losses/effective_class_margin_loss.py)
+
+* Course project re-implementation: [ecm_loss_nick.py](https://github.com/nicholasdehnen/ECM-Loss/blob/d090ffc044c444c5f5956bcc89d420e8ab0b388d/mmdet/models/losses/ecm_loss_nick.py)
+
+* Course project re-implementation + Cho's bg class handling: [ecm_loss_nick_author_bg_handling.py](https://github.com/nicholasdehnen/ECM-Loss/blob/d090ffc044c444c5f5956bcc89d420e8ab0b388d/mmdet/models/losses/ecm_loss_nick_author_bg_handling.py)
+
 
 ## Citation
-If you use use ECM Loss, please cite our paper:
+If you use use ECM Loss, please cite the authors original paper:
 
 	@inproceedings{cho2022ecm,
   		title={Long-tail Detection with Effective Class-Margins},
