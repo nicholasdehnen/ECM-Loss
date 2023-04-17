@@ -22,6 +22,7 @@ from .varifocal_loss import VarifocalLoss
 # ecm loss
 from .effective_class_margin_loss import EffectiveClassMarginLoss
 from .ecm_loss_nick import EffectiveClassMarginLossNick
+from .ecm_loss_nick_author_bg_handling import EffectiveClassMarginLossNickWAuthorBgHandling
 
 __all__ = [
     'accuracy', 'Accuracy', 'cross_entropy', 'binary_cross_entropy',
@@ -33,5 +34,6 @@ __all__ = [
     'l1_loss', 'isr_p', 'carl_loss', 'AssociativeEmbeddingLoss',
     'GaussianFocalLoss', 'QualityFocalLoss', 'DistributionFocalLoss',
     'VarifocalLoss', 'KnowledgeDistillationKLDivLoss', 'SeesawLoss', 'DiceLoss', 
-    'EffectiveClassMarginLoss', 'EffectiveClassMarginLossNick'
+    'EffectiveClassMarginLoss', 'EffectiveClassMarginLossNick',
+    'EffectiveClassMarginLossNickWAuthorBgHandling'
 ]
